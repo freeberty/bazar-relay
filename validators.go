@@ -26,12 +26,12 @@ func validateBidEvent(db *postgresql.PostgresBackend, evt *nostr.Event) (bool, s
 
 	auction, err := getAuction(db, (*tag)[1])
 	if err != nil {
-		log.Printf("error on auction fetch")
+		log.Print("error on auction fetch")
 		return true, "error on auction fetch"
 	}
 
 	if evt.CreatedAt > nostr.Timestamp(auction.FinishTimestamp) {
-		log.Printf("debug: auction closed")
+		log.Print("debug: auction closed")
 		return true, "auction closed"
 	}
 
@@ -48,7 +48,7 @@ func validateBidEvent(db *postgresql.PostgresBackend, evt *nostr.Event) (bool, s
 	}
 
 	if newBid < (topBid + auction.BidStepSats) {
-		log.Printf("debug: new bid should be higher")
+		log.Print("debug: new bid should be higher")
 		return true, "new bid should be higher"
 	}
 	return false, ""
@@ -63,7 +63,7 @@ func validateEventPaid(ctx context.Context, evt *nostr.Event, relay *khatru.Rela
 		})
 	}
 	if paidEvent == 0 {
-		log.Printf("debug: event not paid")
+		log.Print("debug: event not paid")
 		return true, "event not paid"
 	}
 	return false, ""

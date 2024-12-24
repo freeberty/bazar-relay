@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/fiatjaf/eventstore/postgresql"
 	"github.com/fiatjaf/khatru"
 	"github.com/fiatjaf/khatru/policies"
-	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/zebedeeio/go-sdk"
@@ -29,12 +29,9 @@ type RelayConfig struct {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Printf("Warning: .env file not found: %v", err)
-	}
-
 	if err := envconfig.Process("", &config); err != nil {
 		log.Fatalf("failed to read from env: %v", err)
+		os.Exit(1)
 		return
 	}
 
@@ -77,7 +74,7 @@ func main() {
 		},
 	)
 
-	// User to accept payment for events
+	// Used to accept payment for events
 	zbd = zebedee.New(config.ZbdApiKey)
 
 	// Set up HTTP handlers
@@ -86,7 +83,7 @@ func main() {
 	mux.HandleFunc("/payment-update/{hash}", handlePaymentUpdate(relay))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("content-type", "text/html")
-		fmt.Fprintf(w, `<b>welcome</b> to my relay!`)
+		fmt.Fprintf(w, `<b>welcome</b> to bazar relay!`)
 	})
 
 	// Start server

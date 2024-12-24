@@ -16,23 +16,17 @@ primary_region = 'fra'
 [[services]]
   internal_port = 3334
   protocol = "tcp"
-
-  [[services.ports]]
-    port = 3334
-    handlers = ["tcp"]  # For raw TCP traffic
-
-[[services]]
-  internal_port = 80
-  protocol = "tcp"
-
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
+  
   [[services.ports]]
     port = 443
     handlers = ["tls", "http"]
+    
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
 
 [[vm]]
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 256

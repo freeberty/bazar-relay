@@ -1,8 +1,8 @@
 run:
-    go build && ./relay
+    go build -o relay && godotenv ./relay
 
 verbose:
-    go build -tags debug && ./relay
+    go build -o relay -tags debug && godotenv ./relay
 
 build-prod:
     rm -f relay
