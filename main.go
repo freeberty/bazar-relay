@@ -84,6 +84,10 @@ func main() {
 	mux := relay.Router()
 	mux.HandleFunc("/pay-for-event", handleEventPayment())
 	mux.HandleFunc("/payment-update/{hash}", handlePaymentUpdate(relay))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("content-type", "text/html")
+		fmt.Fprintf(w, `<b>welcome</b> to my relay!`)
+	})
 
 	// Start server
 	fmt.Println("Running auction relay on :3334")
