@@ -1,0 +1,36 @@
+# fly.toml app configuration file generated for justbazar-relay on 2024-12-24T00:42:39Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'justbazar-relay'
+primary_region = 'fra'
+
+[build]
+  [build.args]
+    GO_VERSION = '1.23.1'
+
+[env]
+  PORT = '3334'
+
+[[services]]
+  internal_port = 3334
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.ports]]
+    port = 3334
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256
+  
