@@ -1,4 +1,4 @@
-# JustBazar
+# JustBazar relay
 
 This the nostr relay based on khatru, used to store auctions related information.
 Events stored here are custom - they are not nip-15 compatible.
