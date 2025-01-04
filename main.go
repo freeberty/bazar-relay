@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/fiatjaf/eventstore/postgresql"
 	"github.com/fiatjaf/khatru"
@@ -49,14 +50,31 @@ func main() {
 		return
 	}
 
+	// Add justbazar client ip to whitelist
+	AddIpToWhitelist("66.241.124.167")
+	AddIpToWhitelist("2a09:8280:1::58:c4c5:0")
+	AddIpToWhitelist("2605:4c40:197:d7f9:0:e031:74d:1")
+
 	// Apply database handlers
 	relay.StoreEvent = append(relay.StoreEvent, db.SaveEvent)
 	relay.QueryEvents = append(relay.QueryEvents, db.QueryEvents)
 	relay.CountEvents = append(relay.CountEvents, db.CountEvents)
 	relay.DeleteEvent = append(relay.DeleteEvent, db.DeleteEvent)
 
-	// Apply default policies
-	policies.ApplySaneDefaults(relay)
+	// Apply reject policies
+	relay.RejectEvent = append(relay.RejectEvent,
+		policies.RejectEventsWithBase64Media,
+		policies.EventIPRateLimiter(2, time.Minute*3, 10),
+	)
+
+	relay.RejectFilter = append(relay.RejectFilter,
+		policies.NoComplexFilters,
+		policies.FilterIPRateLimiter(20, time.Minute, 100),
+	)
+
+	relay.RejectConnection = append(relay.RejectConnection,
+		WithIpWhitelisted(policies.ConnectionRateLimiter(1, time.Minute*5, 100)),
+	)
 
 	// Custom event validation
 	relay.RejectEvent = append(relay.RejectEvent,
